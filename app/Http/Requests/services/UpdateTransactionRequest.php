@@ -32,6 +32,8 @@ class UpdateTransactionRequest extends FormRequest
 
             'date' => [
                 'nullable',
+                'date',
+                'date_format:Y-m-d',
             ],
 
             'category_name' => [

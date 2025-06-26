@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +58,15 @@ Route::controller(CategoryController::class)
         Route::post('store', 'store')->name('teste-store');
         Route::put('update/{id}', 'update')->name('teste-update');
         Route::delete('destroy/{id}', 'destroy')->name('teste-destroy');
+    });
+
+Route::controller(ReportController::class)
+    ->prefix('report')
+    ->middleware('auth:sanctum')
+    ->group(function () {
+        Route::get('total', 'total')->name('reports-total');
+        Route::get('month/{year}/{month}', 'month')->name('reports-month');
+        Route::get('personalized/{iniDate}/{finDate}', 'personalized')->name('reports-personalized');
     });
 
 // {

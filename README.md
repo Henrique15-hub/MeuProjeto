@@ -157,19 +157,11 @@ Ex: "Uber" → Transporte
 
 📊 Relatórios
 
-- GET /relatorios/saldo
-- Calcula: total de entradas - total de saídas
-- GET /relatorios/mensal
+- GET /relatorios/saldo --V
+- Calcula: total de entradas - total de saídas --V
+
+- GET /relatorios/mensal --V
 - Dados por categoria no mês (soma total e percentual)
-- GET /relatorios/grafico
-- Dados formatados para gráficos (labels + valores)
-
-📁 Importação de Extratos
-
-- Endpoint para importar .csv ou .ofx
-- Faz o upload do arquivo
-- Lê as linhas e converte para transações
-- Aplica classificação automática
 
 Exemplo de CSV:
 
@@ -185,9 +177,8 @@ Exemplo de CSV:
 🧪 Testes Automatizados (PHPUnit)
  Testar:
 
-- Criação de transações
+- Criação de transações --V
 - Relatórios (mensal/saldo)
-- Importação de extrato
 - Regras de classificação automática
 
 📂 Organização Profissional do Código

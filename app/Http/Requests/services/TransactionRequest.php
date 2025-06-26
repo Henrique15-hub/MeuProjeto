@@ -32,6 +32,8 @@ class TransactionRequest extends FormRequest
 
             'date' => [
                 'required',
+                'date',
+                'date_format:Y-m-d',
             ],
 
             'category_name' => [

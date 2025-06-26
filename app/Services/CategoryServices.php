@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Http\Requests\services\StoreCategoryRequest;
-use App\Http\Requests\services\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
+
 class CategoryServices
 {
     /**
@@ -37,7 +36,7 @@ class CategoryServices
         return response()->json([
             'message' => 'category created with success',
             'category' => $category,
-        ],201);
+        ], 201);
     }
 
     /**
@@ -47,10 +46,10 @@ class CategoryServices
     {
         $category = auth()->user()->category()->find($id);
 
-        if (!$category) {
+        if (! $category) {
             return response()->json([
                 'message' => 'category not found',
-            ],404);
+            ], 404);
         }
 
         return response()->json([
@@ -68,10 +67,10 @@ class CategoryServices
 
         $category = auth()->user()->category()->find($id);
 
-        if (!$category) {
+        if (! $category) {
             return response()->json([
                 'message' => 'category not found',
-            ],404);
+            ], 404);
         }
 
         $category->update($validatedData);
@@ -89,16 +88,16 @@ class CategoryServices
     {
         $category = auth()->user()->category()->find($id);
 
-        if (!$category) {
+        if (! $category) {
             return response()->json([
                 'message' => 'category not found',
-            ],404);
+            ], 404);
         }
 
         $category->delete();
 
         return response()->json([
-            'message' => 'category deleted with success'
+            'message' => 'category deleted with success',
         ]);
     }
 }

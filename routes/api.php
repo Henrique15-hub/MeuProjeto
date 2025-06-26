@@ -1,12 +1,10 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
-use GuzzleHttp\Middleware;
-use App\Http\Controllers\teste;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\auth\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::controller(UserController::class)
     ->middleware('auth:sanctum')
@@ -39,7 +37,6 @@ Route::controller(TransactionController::class)
     ->prefix('transaction')
     ->middleware('auth:sanctum')
     ->group(function () {
-        Route::get('teste', 'teste');
 
         Route::get('queryData/{inicialData}/{finalData}', 'queryData')
             ->name('transaction-query-data');
@@ -51,19 +48,16 @@ Route::controller(TransactionController::class)
             ->name('transaction-query-category');
     });
 
-
-
 Route::controller(CategoryController::class)
     ->prefix('category')
     ->middleware('auth:sanctum')
     ->group(function () {
-       Route::get('index', 'index')->name('teste-index');
-       Route::get('show/{id}','show')->name('teste-show');
-       Route::post('store', 'store')->name('teste-store');
-       Route::put('update/{id}', 'update')->name('teste-update');
-       Route::delete('destroy/{id}', 'destroy')->name('teste-destroy');
+        Route::get('index', 'index')->name('teste-index');
+        Route::get('show/{id}', 'show')->name('teste-show');
+        Route::post('store', 'store')->name('teste-store');
+        Route::put('update/{id}', 'update')->name('teste-update');
+        Route::delete('destroy/{id}', 'destroy')->name('teste-destroy');
     });
-
 
 // {
 //     "name": "admin",

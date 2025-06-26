@@ -4,33 +4,33 @@ namespace App\Services;
 
 class TransactionQueryServices
 {
-    public function queryData ($initialData, $finalData) {
+    public function queryData($initialData, $finalData)
+    {
         $queryData = $this->getTransactionsUser()
-        ->where('date', '>=', $initialData)
-        ->where('date', '<=', $finalData);
-
+            ->where('date', '>=', $initialData)
+            ->where('date', '<=', $finalData);
 
         return $queryData;
     }
 
-    public function queryType ($type) {
-          $queryType = $this->getTransactionsUser()
-          ->where('type', $type);
+    public function queryType($type)
+    {
+        $queryType = $this->getTransactionsUser()
+            ->where('type', $type);
 
-          return $queryType;
+        return $queryType;
     }
 
-    public function queryCategory ($category) {
+    public function queryCategory($category)
+    {
         $queryCategory = $this->getTransactionsUser()
-        ->where('category_name', $category);
+            ->where('category_name', $category);
 
         return $queryCategory;
     }
 
-
-
-
-    public function getTransactionsUser () {
+    public function getTransactionsUser()
+    {
         $wallet = auth()->user()->wallet()->first();
 
         $transacitons = $wallet->transactions()->get();

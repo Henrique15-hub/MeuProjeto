@@ -17,7 +17,7 @@ class TransactionRequest extends FormRequest
             'amount' => [
                 'required',
                 'numeric',
-                'gt:0'
+                'gt:0',
             ],
 
             'type' => [
@@ -37,7 +37,7 @@ class TransactionRequest extends FormRequest
             'category_name' => [
                 'nullable',
                 'string',
-            ]
+            ],
         ];
     }
 }

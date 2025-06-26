@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\user\StoreUserRequest;
+use App\Http\Requests\user\UpdateUserRequest;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\user\StoreUserRequest;
-use App\Http\Requests\user\UpdateUserRequest;
 
 class UserController extends Controller
 {
@@ -22,6 +22,7 @@ class UserController extends Controller
             'users' => $users,
         ]);
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -39,9 +40,10 @@ class UserController extends Controller
             'message' => 'user created with success',
             'user' => $user->name,
             'wallet' => $wallet,
-        ],201);
+        ], 201);
 
     }
+
     /**
      * Update the specified resource in storage.
      */
@@ -57,6 +59,7 @@ class UserController extends Controller
             'user' => $user->fresh(),
         ]);
     }
+
     /**
      * Remove the specified resource from storage.
      */

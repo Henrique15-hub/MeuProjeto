@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\services\StoreCategoryRequest;
 use App\Http\Requests\services\UpdateCategoryRequest;
-use Illuminate\Http\JsonResponse;
 use App\Services\CategoryServices;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
     private $categoryServices;
 
-    public function __construct () {
+    public function __construct()
+    {
         $this->categoryServices = new CategoryServices;
     }
 
@@ -29,6 +30,7 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request): JsonResponse
     {
         $request->isPersonalizada = true;
+
         return $this->categoryServices->store($request);
     }
 

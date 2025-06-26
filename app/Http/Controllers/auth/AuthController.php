@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers\auth;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\LoginUserRequest;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function login (LoginUserRequest $request): JsonResponse {
+    public function login(LoginUserRequest $request): JsonResponse
+    {
         $validatedData = $request->validated();
         $user = User::where('email', $validatedData['email'])->first();
 
-        if (!$user or !Hash::check($validatedData['password'], $user->password)) {
+        if (! $user or ! Hash::check($validatedData['password'], $user->password)) {
             return response()->json([
                 'message' => 'invalid credentials',
-            ],422);
+            ], 422);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -30,7 +30,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout (): JsonResponse {
+    public function logout(): JsonResponse
+    {
         $user = auth()->user();
 
         $user->tokens()->delete();

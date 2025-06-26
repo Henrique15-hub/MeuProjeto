@@ -12,11 +12,13 @@ class Wallet extends Model
         'balance',
     ];
 
-    public function user (): BelongsTo {
-       return $this->belongsTo(User::class);
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
-    public function transactions () {
+    public function transactions()
+    {
         return $this->hasMany(Transaction::class);
     }
 }

@@ -14,10 +14,10 @@ class UpdateTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-              'amount' => [
+            'amount' => [
                 'nullable',
                 'numeric',
-                'gt:0'
+                'gt:0',
             ],
 
             'type' => [
@@ -37,7 +37,7 @@ class UpdateTransactionRequest extends FormRequest
             'category_name' => [
                 'nullable',
                 'string',
-            ]
+            ],
         ];
     }
 }

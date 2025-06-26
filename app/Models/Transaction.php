@@ -16,11 +16,13 @@ class Transaction extends Model
         'date',
     ];
 
-    public function wallet (): BelongsTo {
+    public function wallet(): BelongsTo
+    {
         return $this->belongsTo(Wallet::class);
     }
 
-    public function category () {
+    public function category()
+    {
         return $this->hasOne(Category::class);
     }
 }

@@ -3,101 +3,93 @@
 namespace App\Services;
 
 use App\Models\Category;
-use Illuminate\Http\JsonResponse;
 
 class CategoryServices
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index()
     {
-        $categories = auth()->user()->category()->get();
+        $categories = Category::whereIn('user_id', [0, auth()->id()])->get();
 
-        return response()->json([
-            'message' => 'showing all categories of the authenticated user',
-            'categories' => $categories,
-        ]);
+        return $categories;
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store($request): JsonResponse
+    public function store($validatedData)
     {
-        $validatedData = $request->validated();
-
         $category = Category::create([
             'name' => $validatedData['name'],
             'isPersonalizada' => true,
             'user_id' => auth()->id(),
         ]);
 
-        return response()->json([
-            'message' => 'category created with success',
-            'category' => $category,
-        ], 201);
+        return $category;
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(int $id): JsonResponse
+    public function show(int $id)
     {
-        $category = auth()->user()->category()->find($id);
+        $category = Category::whereIn('user_id', [0, auth()->id()])
+            ->where('id', $id)->first();
 
         if (! $category) {
-            return response()->json([
-                'message' => 'category not found',
-            ], 404);
+            return [
+                'success' => false,
+            ];
         }
 
-        return response()->json([
-            'message' => 'showing the category',
+        return [
+            'success' => true,
             'category' => $category,
-        ]);
+        ];
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update($request, int $id): JsonResponse
+    public function update($validatedData, int $id)
     {
-        $validatedData = $request->validated();
 
-        $category = auth()->user()->category()->find($id);
+        $category = Category::whereIn('user_id', [0, auth()->id()])
+            ->where('id', $id)->first();
 
         if (! $category) {
-            return response()->json([
-                'message' => 'category not found',
-            ], 404);
+            return [
+                'success' => false,
+            ];
         }
 
         $category->update($validatedData);
 
-        return response()->json([
-            'message' => 'category updated with success',
+        return [
+            'success' => true,
             'category' => $category->fresh(),
-        ]);
+        ];
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id): JsonResponse
+    public function destroy(int $id)
     {
         $category = auth()->user()->category()->find($id);
 
         if (! $category) {
-            return response()->json([
-                'message' => 'category not found',
-            ], 404);
+            return [
+                'success' => false,
+            ];
         }
 
         $category->delete();
 
-        return response()->json([
-            'message' => 'category deleted with success',
-        ]);
+        return [
+            'success' => true,
+        ];
     }
 }

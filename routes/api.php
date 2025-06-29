@@ -32,6 +32,7 @@ Route::controller(TransactionController::class)
         Route::post('entry', 'entry')->name('transaction-entry');
         Route::post('withdraw', 'withdraw')->name('transaction-withdraw');
         Route::put('update/{id}', 'update')->name('transaction-update');
+        Route::delete('destroy/{id}', 'destroy')->name('transaction-destroy');
     });
 
 Route::controller(TransactionController::class)
@@ -39,8 +40,8 @@ Route::controller(TransactionController::class)
     ->middleware('auth:sanctum')
     ->group(function () {
 
-        Route::get('queryData/{inicialData}/{finalData}', 'queryData')
-            ->name('transaction-query-data');
+        Route::get('queryDate/{inicialDate}/{finalDate}', 'queryDate')
+            ->name('transaction-query-date');
 
         Route::get('queryType/{type}', 'queryType')
             ->name('transaction-query-type');
@@ -53,11 +54,11 @@ Route::controller(CategoryController::class)
     ->prefix('category')
     ->middleware('auth:sanctum')
     ->group(function () {
-        Route::get('index', 'index')->name('teste-index');
-        Route::get('show/{id}', 'show')->name('teste-show');
-        Route::post('store', 'store')->name('teste-store');
-        Route::put('update/{id}', 'update')->name('teste-update');
-        Route::delete('destroy/{id}', 'destroy')->name('teste-destroy');
+        Route::get('index', 'index')->name('category-index');
+        Route::get('show/{id}', 'show')->name('category-show');
+        Route::post('store', 'store')->name('category-store');
+        Route::put('update/{id}', 'update')->name('category-update');
+        Route::delete('destroy/{id}', 'destroy')->name('category-destroy');
     });
 
 Route::controller(ReportController::class)

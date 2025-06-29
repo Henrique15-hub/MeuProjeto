@@ -127,5 +127,3 @@ class ReportServices
         return $balance;
     }
 }
-
-// data: year/month/day

@@ -87,6 +87,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'message' => 'transaction updated with success',
+            'transaction' => $transaction->fresh(),
         ]);
     }
 
@@ -111,7 +112,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function queryData($initialData, $finalData): JsonResponse
+    public function queryDate($initialData, $finalData): JsonResponse
     {
         if (! Carbon::hasFormat($initialData, 'Y-m-d') or ! Carbon::hasFormat($finalData, 'Y-m-d')) {
             return ResponseHelper::withTip('invalid format or date', [], 400);
@@ -121,11 +122,11 @@ class TransactionController extends Controller
             return ResponseHelper::withTip('initial date has to be smaller than final date', [], 400);
         }
 
-        $queryData = $this->transactionqueryservices->queryData($initialData, $finalData);
+        $queryDate = $this->transactionqueryservices->queryDate($initialData, $finalData);
 
         return response()->json([
             'message' => "showing all transactions from {$initialData} to {$finalData}",
-            'transactions' => $queryData,
+            'transactions' => $queryDate,
         ]);
     }
 

@@ -19,7 +19,7 @@ class Report extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function transaction()
+    public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class);
     }

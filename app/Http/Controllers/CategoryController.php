@@ -21,7 +21,12 @@ class CategoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->categoryServices->index();
+        $categories = $this->categoryServices->index();
+
+        return response()->json([
+            'message' => 'showing all categories of the authenticated user',
+            'categories' => $categories,
+        ]);
     }
 
     /**
@@ -29,9 +34,14 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request): JsonResponse
     {
-        $request->isPersonalizada = true;
+        $validatedData = $request->validated();
 
-        return $this->categoryServices->store($request);
+        $category = $this->categoryServices->store($validatedData);
+
+        return response()->json([
+            'message' => 'category created succesfully',
+            'category' => $category,
+        ], 201);
     }
 
     /**
@@ -39,7 +49,18 @@ class CategoryController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        return $this->categoryServices->show($id);
+        $category = $this->categoryServices->show($id);
+
+        if (! $category['success']) {
+            return response()->json([
+                'message' => 'category not found',
+            ], 404);
+        }
+
+        return response()->json(array_merge([
+            'message' => 'showing the category'],
+            $category,
+        ));
     }
 
     /**
@@ -47,7 +68,20 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, int $id): JsonResponse
     {
-        return $this->categoryServices->update($request, $id);
+        $validatedData = $request->validated();
+
+        $category = $this->categoryServices->update($validatedData, $id);
+
+        if (! $category['success']) {
+            return response()->json([
+                'message' => 'category not found',
+            ], 404);
+        }
+
+        return response()->json(array_merge([
+            'message' => 'category updated successfully'],
+            $category
+        ));
     }
 
     /**
@@ -55,6 +89,16 @@ class CategoryController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        return $this->categoryServices->destroy($id);
+        $category = $this->categoryServices->destroy($id);
+
+        if (! $category['success']) {
+            return response()->json([
+                'message' => 'category not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'category deleted successfully',
+        ]);
     }
 }

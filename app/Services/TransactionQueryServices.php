@@ -4,13 +4,13 @@ namespace App\Services;
 
 class TransactionQueryServices
 {
-    public function queryData($initialData, $finalData)
+    public function queryDate($initialDate, $finalDate)
     {
-        $queryData = $this->getTransactionsUser()
-            ->where('date', '>=', $initialData)
-            ->where('date', '<=', $finalData);
+        $queryDate = $this->getTransactionsUser()
+            ->where('date', '>=', $initialDate)
+            ->where('date', '<=', $finalDate);
 
-        return $queryData;
+        return $queryDate;
     }
 
     public function queryType($type)

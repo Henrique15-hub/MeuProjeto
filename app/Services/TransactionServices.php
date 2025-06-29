@@ -141,11 +141,3 @@ class TransactionServices
         return $category;
     }
 }
-
-// {
-//   "amount": 1500,
-//   "type": "entrada",
-//   "description": "Salário Junho - Empresa X",
-//   "date": "2025-06-05",
-//   "category_id": 1
-// }

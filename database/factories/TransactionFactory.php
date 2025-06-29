@@ -19,7 +19,7 @@ class TransactionFactory extends Factory
         return [
             'wallet_id' => auth()->id(),
             'type' => fake()->randomElement(['entry', 'withdraw']),
-            'amount' => fake()->numberBetween(0.1, 99999),
+            'amount' => fake()->numberBetween(0.1, 9999),
             'description' => fake()->text('100'),
             'category_name' => fake()->word(),
             'date' => fake()->date(),

@@ -58,7 +58,7 @@ class User extends Authenticatable
         return $this->hasMany(Category::class);
     }
 
-    public function report()
+    public function report(): HasMany
     {
         return $this->hasMany(Report::class);
     }

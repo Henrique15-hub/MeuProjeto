@@ -195,3 +195,23 @@ Exemplo de CSV:
 - Exportar dados em .csv ou .pdf
 - Dashboard com Livewire (se quiser brincar com front)
 
+
+
+
+
+💸 TransactionFeatureTest
+ test_user_can_update_transaction — update na transação --V
+
+ test_user_can_delete_transaction — delete na transação --V
+
+ test_user_can_query_transactions_by_date/type/category — valida os filtros --V
+
+
+🗂️ CategoryFeatureTest
+ test_user_can_update_category
+
+ test_user_can_delete_category
+
+ test_user_can_view_category_by_id
+
+ test_user_cannot_see_other_user_category_show

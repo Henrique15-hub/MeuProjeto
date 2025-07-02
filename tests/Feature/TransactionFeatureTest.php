@@ -12,17 +12,45 @@ class TransactionFeatureTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_user_can_see_all_his_transactions()
+    {
+        $user = User::factory()->create();
+
+        $otherUser = User::factory()->create();
+        $this->actingAs($user, 'sanctum');
+
+        Transaction::factory()->count(5)->create();
+
+        Transaction::factory()->count(2)->create([
+            'wallet_id' => $otherUser->id,
+        ]);
+
+        $this->assertDatabaseCount(Transaction::class, 7);
+
+        $this->getJson(route('transaction-index'))
+            ->assertOk()
+            ->assertJsonStructure([
+                'message',
+                'transactions',
+            ])
+            ->assertJsonCount(5, 'transactions');
+    }
+
     public function test_user_can_create_entry_transaction(): void
     {
         $user = User::factory()->create();
 
+        $walletId = $user->wallet->id;
+
+        $description = 'test_user_can_create_entry_transaction';
+
         $this->actingAs($user, 'sanctum');
 
         $transaction = [
-            'wallet_id' => auth()->id(),
+            'wallet_id' => $walletId,
             'amount' => 1550,
             'type' => 'entry',
-            'description' => 'test_user_can_create_entry_transaction',
+            'description' => $description,
             'category_name' => 'test',
             'date' => '2025-01-01',
         ];
@@ -34,11 +62,11 @@ class TransactionFeatureTest extends TestCase
                 'message',
             ]);
 
-        $this->assertDatabaseHas('transactions', [
-            'wallet_id' => 1,
+        $this->assertDatabaseHas(Transaction::class, [
+            'wallet_id' => $walletId,
             'amount' => 1550,
             'type' => 'entry',
-            'description' => 'test_user_can_create_entry_transaction',
+            'description' => $description,
             'category_name' => 'Test',
             'date' => '2025-01-01',
 
@@ -48,8 +76,11 @@ class TransactionFeatureTest extends TestCase
     public function test_user_can_create_withdraw_transaction()
     {
         $user = User::factory()->create();
+
+        $walletId = $user->wallet->id;
+
         $transaction = [
-            'wallet_id' => 1,
+            'wallet_id' => $walletId,
             'amount' => 1550,
             'type' => 'withdraw',
             'description' => 'test_user_can_create_withdraw_transaction',
@@ -58,6 +89,7 @@ class TransactionFeatureTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum');
+
         $this->postJson(route('transaction-withdraw'), $transaction)
             ->assertStatus(201)
             ->assertJsonStructure([
@@ -65,8 +97,8 @@ class TransactionFeatureTest extends TestCase
                 'message',
             ]);
 
-        $this->assertDatabaseHas('transactions', [
-            'wallet_id' => 1,
+        $this->assertDatabaseHas(Transaction::class, [
+            'wallet_id' => $walletId,
             'amount' => 1550,
             'type' => 'withdraw',
             'description' => 'test_user_can_create_withdraw_transaction',
@@ -81,36 +113,42 @@ class TransactionFeatureTest extends TestCase
 
         $this->actingAs($user, 'sanctum');
 
-        Transaction::factory()->create();
-        $id = 1;
+        $oldTransaction = Transaction::factory()->create();
+
+        $amount = fake()->numberBetween(100, 10000);
+
+        $description = 'test_user_can_update_transction';
+
+        $date = fake()->date();
+
         $transaction = [
-            'amount' => 2000,
+            'amount' => $amount,
             'type' => 'entry',
-            'description' => 'test_user_can_update_transction',
+            'description' => $description,
             'category_name' => 'test',
-            'date' => '2025-01-03',
+            'date' => $date,
         ];
 
-        $this->putJson('api/transaction/update/1', $transaction)
-            ->assertStatus(200)
+        $this->putJson(route('transaction-update', $oldTransaction->id), $transaction)
+            ->assertOK()
             ->assertJsonStructure([
                 'message',
                 'transaction',
             ])
             ->assertJsonFragment([
-                'amount' => 2000,
+                'amount' => $amount,
                 'type' => 'entry',
-                'description' => 'test_user_can_update_transction',
+                'description' => $description,
                 'category_name' => 'test',
-                'date' => '2025-01-03',
+                'date' => $date,
             ]);
 
         $this->assertDatabaseHas('transactions', [
-            'amount' => 2000,
+            'amount' => $amount,
             'type' => 'entry',
-            'description' => 'test_user_can_update_transction',
+            'description' => $description,
             'category_name' => 'test',
-            'date' => '2025-01-03',
+            'date' => $date,
         ]);
     }
 
@@ -120,10 +158,10 @@ class TransactionFeatureTest extends TestCase
 
         $this->actingAs($user, 'sanctum');
 
-        Transaction::factory()->create();
+        $transaciton = Transaction::factory()->create();
 
-        $this->deleteJson('api/transaction/destroy/1')
-            ->assertStatus(200)
+        $this->deleteJson(route('transaction-destroy', $transaciton->id))
+            ->assertOk()
             ->assertJsonStructure([
                 'message',
             ])
@@ -131,7 +169,7 @@ class TransactionFeatureTest extends TestCase
                 'message' => 'transaction successfully deleted',
             ]);
 
-        $this->assertDatabaseEmpty('transactions');
+        $this->assertDatabaseEmpty(Transaction::class);
     }
 
     public function test_user_can_query_transactions_by_date()
@@ -140,25 +178,28 @@ class TransactionFeatureTest extends TestCase
 
         $this->actingAs($user, 'sanctum');
 
-        Transaction::factory()->count(3)->create([
+        $otherUserTransaction = Transaction::factory()->create([
             'date' => '2025-12-03',
         ]);
 
-        Transaction::factory()->create([
+        $userTransaction = Transaction::factory()->create([
             'date' => '2025-03-13',
         ]);
 
-        $this->getJson('api/transaction/queryDate/2025-03-05/2025-03-30')
-            ->assertStatus(200)
+        $this->getJson(route('transaction-query-date', ['2025-03-01', '2025-03-30']))
+            ->assertOk()
             ->assertJsonStructure([
                 'message',
                 'transactions',
             ])
             ->assertJsonFragment([
-                'date' => '2025-03-13',
+                'date' => $userTransaction->date,
+            ])
+            ->assertJsonMissing([
+                'date' => $otherUserTransaction->date,
             ]);
 
-        $this->assertDatabaseCount('transactions', 4);
+        $this->assertDatabaseCount(Transaction::class, 2);
     }
 
     public function test_user_can_query_transactions_by_type()
@@ -167,28 +208,28 @@ class TransactionFeatureTest extends TestCase
 
         $this->actingAs($user, 'sanctum');
 
-        Transaction::factory()->count(3)->create([
+        $otherUserTransaction = Transaction::factory()->create([
             'type' => 'withdraw',
         ]);
 
-        Transaction::factory()->create([
+        $userTransaction = Transaction::factory()->create([
             'type' => 'entry',
         ]);
 
-        $this->getJson('api/transaction/queryType/entry')
-            ->assertStatus(200)
+        $this->getJson(route('transaction-query-type', 'entry'))
+            ->assertOK()
             ->assertJsonStructure([
                 'message',
                 'transactions',
             ])
             ->assertJsonFragment([
-                'type' => 'entry',
+                'type' => $userTransaction->type,
             ])
             ->assertJsonMissing([
-                'type' => 'withdraw',
+                'type' => $otherUserTransaction->type,
             ]);
 
-        $this->assertDatabaseCount('transactions', 4);
+        $this->assertDatabaseCount(Transaction::class, 2);
     }
 
     public function test_user_can_query_transactions_by_category()
@@ -197,35 +238,34 @@ class TransactionFeatureTest extends TestCase
 
         $this->actingAs($user, 'sanctum');
 
-        Category::create([
-            'name' => 'Test',
+        Category::factory()->create([
+            'name' => 'User Transaction',
             'isPersonalizada' => true,
-            'user_id' => auth()->id(),
         ]);
 
-        Transaction::factory()->count(5)->create([
-            'category_name' => 'Test',
+        $userTransaction = Transaction::factory()->create([
+            'category_name' => 'User Transaction',
         ]);
 
-        Transaction::factory()->create([
-            'category_name' => 'Test2',
+        $othterUserTransaction = Transaction::factory()->create([
+            'category_name' => 'Other User Transaction',
         ]);
 
-        $this->assertDatabaseCount('categories', 5);
+        $this->assertDatabaseCount(Category::class, 5);
 
-        $this->assertDatabaseCount('transactions', 6);
+        $this->assertDatabaseCount(Transaction::class, 2);
 
-        $this->getJson('api/transaction/queryCategory/Test')
-            ->assertStatus(200)
+        $this->getJson(route('transaction-query-category', $userTransaction->category_name))
+            ->assertOK()
             ->assertJsonStructure([
                 'message',
                 'transactions',
             ])
             ->assertJsonFragment([
-                'category_name' => 'Test',
+                'category_name' => $userTransaction->category_name,
             ])
             ->assertJsonMissing([
-                'category_name' => 'Test2',
+                'category_name' => $othterUserTransaction->category_name,
             ]);
     }
 }

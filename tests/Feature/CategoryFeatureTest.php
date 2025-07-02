@@ -77,13 +77,13 @@ class CategoryFeatureTest extends TestCase
 
         $this->actingAs($user, 'sanctum');
 
-        Category::factory()->create();
+        $oldCategory = Category::factory()->create();
 
-        $category = [
+        $name = [
             'name' => 'Updated category',
         ];
 
-        $this->putJson('api/category/update/5', $category)
+        $this->putJson("api/category/update/{$oldCategory->id}", $name)
             ->assertStatus(200)
             ->assertJsonStructure([
                 'message',
@@ -96,5 +96,50 @@ class CategoryFeatureTest extends TestCase
         $this->assertDatabaseHas('categories', [
             'name' => 'Updated category',
         ]);
+    }
+
+    public function test_user_can_see_a_specific_category()
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
+        $category = Category::factory()->create([
+            'name' => 'Teste show',
+        ]);
+
+        $this->assertDatabaseHas(Category::class, [
+            'name' => 'Teste show',
+        ]);
+
+        $this->getJson(route('category-show', $category->id))
+            ->assertOk()
+            ->assertJsonStructure([
+                'message',
+                'category',
+            ])
+            ->assertJsonFragment([
+                'name' => 'Teste show',
+            ]);
+    }
+
+    public function test_user_can_destroy_category()
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
+        $category = Category::factory()->create([
+            'name' => 'Teste show',
+        ]);
+
+        $this->deleteJson(route('category-destroy', $category->id))
+            ->assertOk()
+            ->assertJsonStructure([
+                'message',
+            ])
+            ->assertJsonFragment([
+                'message' => 'category deleted successfully',
+            ]);
     }
 }

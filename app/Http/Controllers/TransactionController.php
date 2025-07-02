@@ -36,7 +36,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'message' => 'showing all the transactions of the auth user',
-            'transacions' => $transactions,
+            'transactions' => $transactions,
         ]);
     }
 
@@ -45,6 +45,7 @@ class TransactionController extends Controller
         $validatedData = $data->validated();
 
         $this->transactionservices = new TransactionServices(auth()->user());
+
         $response = $this->transactionservices->entry($validatedData);
 
         if (! $response['success']) {
@@ -151,7 +152,7 @@ class TransactionController extends Controller
 
     public function queryCategory(string $category): JsonResponse
     {
-        $categories = Category::whereIn('user_id', [0, auth()->id()])
+        $categories = Category::whereIn('user_id', [null, auth()->id()])
             ->pluck('name');
 
         if (! in_array($category, $categories->toArray())) {

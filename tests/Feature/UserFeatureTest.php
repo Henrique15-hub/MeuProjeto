@@ -19,7 +19,7 @@ class UserFeatureTest extends TestCase
         ];
 
         $this->postJson(route('user-store'), $user)
-            ->assertStatus(201)
+            ->assertCreated()
             ->assertJsonStructure([
                 'message',
                 'user',

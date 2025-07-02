@@ -19,7 +19,7 @@ class TransactionFeatureTest extends TestCase
         $this->actingAs($user, 'sanctum');
 
         $transaction = [
-            'wallet_id' => 1,
+            'wallet_id' => auth()->id(),
             'amount' => 1550,
             'type' => 'entry',
             'description' => 'test_user_can_create_entry_transaction',

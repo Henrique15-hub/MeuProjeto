@@ -13,7 +13,7 @@ class CategoryController extends Controller
 
     public function __construct()
     {
-        $this->categoryServices = new CategoryServices;
+        $this->categoryServices = new CategoryServices(auth()->user());
     }
 
     /**

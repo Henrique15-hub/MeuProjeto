@@ -13,7 +13,7 @@ class ReportController extends Controller
 
     public function __construct()
     {
-        $this->reportservices = new ReportServices;
+        $this->reportservices = new ReportServices(auth()->user());
     }
 
     public function total(): JsonResponse

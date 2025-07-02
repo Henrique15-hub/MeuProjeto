@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->boolean('isPersonalizada');
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->nullable();
             $table->timestamps();
         });
     }

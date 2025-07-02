@@ -67,15 +67,14 @@ class User extends Authenticatable
     {
         static::created(function ($user) {
             if (User::count() === 1) {
-                $categoriasPadrao = [
-                    'Transporte', 'Alimentacao', 'Lazer', 'Financeiro',
+                $defaultCategory = [
+                    'TRANSPORT', 'FOOD', 'LEISURE', 'FINANCIAL',
                 ];
 
-                foreach ($categoriasPadrao as $categoria) {
+                foreach ($defaultCategory as $category) {
                     Category::create([
-                        'name' => $categoria,
+                        'name' => $category,
                         'isPersonalizada' => false,
-                        'user_id' => 0,
                     ]);
                 }
             }

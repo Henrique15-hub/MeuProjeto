@@ -63,7 +63,7 @@ class CategoryFeatureTest extends TestCase
                 'categories',
             ])
             ->assertJsonFragment([
-                'user_id' => 0,
+                'user_id' => null,
             ])
             ->assertJsonMissing([
                 'name' => 'Other User Category',
@@ -79,11 +79,11 @@ class CategoryFeatureTest extends TestCase
 
         Category::factory()->create();
 
-        $cateogry = [
+        $category = [
             'name' => 'Updated category',
         ];
 
-        $this->putJson('api/category/update/1', $cateogry)
+        $this->putJson('api/category/update/5', $category)
             ->assertStatus(200)
             ->assertJsonStructure([
                 'message',

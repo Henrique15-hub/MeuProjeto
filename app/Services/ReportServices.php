@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Report;
+use App\Models\User;
 use Carbon\Carbon;
 
 class ReportServices
@@ -11,20 +12,24 @@ class ReportServices
 
     private $withdraw;
 
+    private $user;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
     public function total()
     {
-        $wallet = auth()->user()->wallet()->first();
+        $wallet = $this->user->wallet()->first();
 
-        $this->entry = $wallet->transactions()->where('type', 'entry')->get();
+        $this->entry = $wallet->transactions()->where('type', 'entry')->get()->sum('amount');
 
-        $this->withdraw = $wallet->transactions()->where('type', 'withdraw')->get();
+        $this->withdraw = $wallet->transactions()->where('type', 'withdraw')->get()->sum('amount');
 
-        $totalEntry = $this->entry->sum('amount');
-        $totalWithdraw = $this->withdraw->sum('amount');
+        $balance = $this->entry - $this->withdraw;
 
-        $balance = $totalEntry - $totalWithdraw;
-
-        $todayReport = Report::where('user_id', auth()->id())
+        $todayReport = Report::where('user_id', $this->user->id)
             ->where('date', 'all')
             ->where('value', $balance)
             ->where('type', 'total')->first();
@@ -34,7 +39,7 @@ class ReportServices
         }
 
         Report::create([
-            'user_id' => auth()->id(),
+            'user_id' => $this->user->id,
             'date' => 'all',
             'value' => $balance,
             'type' => 'total',
@@ -45,7 +50,7 @@ class ReportServices
 
     public function balanceMonth($year, $month)
     {
-        $wallet = auth()->user()->wallet()->first();
+        $wallet = $this->user->wallet()->first();
 
         $initialData = Carbon::createFromDate($year, $month, 1)->toDateString();
         $finalData = Carbon::createFromDate($year, $month, 1)->endOfMonth()->toDateString();
@@ -54,21 +59,21 @@ class ReportServices
             ->where('date', '>=', $initialData)
             ->where('date', '<=', $finalData)
             ->where('type', 'entry')
-            ->get();
+            ->get()
+            ->sum('amount');
 
         $this->withdraw = $wallet->transactions()
             ->where('date', '>=', $initialData)
             ->where('date', '<=', $finalData)
             ->where('type', 'withdraw')
-            ->get();
+            ->get()
+            ->sum('amount');
 
-        $totalEntry = $this->entry->sum('amount');
-        $totalWithdraw = $this->withdraw->sum('amount');
-
-        $balance = $totalEntry - $totalWithdraw;
+        $balance = $this->entry - $this->withdraw;
 
         $date = Carbon::createFromDate($year, $month, 1)->format('Y-m');
-        $monthReport = Report::where('user_id', auth()->id())
+
+        $monthReport = Report::where('user_id', $this->user->id)
             ->where('date', $date)
             ->where('value', $balance)
             ->where('type', 'month')->first();
@@ -78,7 +83,7 @@ class ReportServices
         }
 
         Report::create([
-            'user_id' => auth()->id(),
+            'user_id' => $this->user->id,
             'date' => $date,
             'value' => $balance,
             'type' => 'month',
@@ -89,7 +94,7 @@ class ReportServices
 
     public function personalized($initialData, $finalData)
     {
-        $wallet = auth()->user()->wallet()->first();
+        $wallet = $this->user->wallet()->first();
 
         $this->entry = $wallet->transactions()
             ->where('date', '>=', $initialData)
@@ -108,7 +113,7 @@ class ReportServices
 
         $balance = $totalEntry - $totalWithdraw;
 
-        $personalizedReport = Report::where('user_id', auth()->id())
+        $personalizedReport = Report::where('user_id', $this->user->id)
             ->where('date', "{$initialData}==>{$finalData}")
             ->where('value', $balance)
             ->where('type', 'personalized')->first();
@@ -118,7 +123,7 @@ class ReportServices
         }
 
         Report::create([
-            'user_id' => auth()->id(),
+            'user_id' => $this->user->id,
             'date' => "{$initialData}==>{$finalData}",
             'value' => $balance,
             'type' => 'personalized',

@@ -31,25 +31,6 @@ Todo o código foi construído com base nos princípios **SOLID**, **Clean Code*
 
 ---
 
-Estrutura dos Diretórios
-app/
- ├── Enum/                     # Enum de categorias padrão
- ├── Helpers/                  # Funções auxiliares (ex: ResponseHelper)
- ├── Http/
- │   ├── Controllers/          # Controllers RESTful da API
- │   ├── Requests/             # Validações via Form Requests
- ├── Models/                   # Models principais: User, Transaction, Category, Report
- ├── Services/                 # Lógica de negócio 
-routes/
- └── api.php                   # Rotas da API
-database/
- ├── migrations/               # Estrutura do banco de dados
- ├── factories/                # Geração automática de dados
-tests/
- └── Feature/                  # Testes automatizados por funcionalidade
-
----
-
 ## TESTES
 
 - Todas as rotas do sistema contam com testes feature automatizados
